@@ -15,6 +15,7 @@ public class GameModel {
     private int lives;
 
     private boolean isBallStuck;
+    private boolean isGameOver;
 
     public GameModel() {
         ball = new Ball(400, 400, 10, 0, 0);
@@ -24,7 +25,7 @@ public class GameModel {
         score = 0;
         lives = 3;
         isBallStuck = true;
-
+        isGameOver = false;
         createBricks();
     }
 
@@ -71,6 +72,15 @@ public class GameModel {
 
                 if (ball.getY() - ball.getRadius() <= 0 && ball.getVelocityY() < 0) {
                     ball.bounceVertically();
+                }
+
+                if (ball.getY() - ball.getRadius() >= gameHeight){
+                    lives--;
+                    if (lives > 0) {
+                        isBallStuck = true;
+                    } else {
+                        isGameOver = true;
+                    }
                 }
 
                 // Paddle collision logic
@@ -147,8 +157,7 @@ public class GameModel {
             return lives;
         }
 
-
-
-
-
+        public boolean isGameOver(){
+            return isGameOver;
+        }
 }

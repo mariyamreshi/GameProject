@@ -15,6 +15,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.PixelReader;
 import javafx.scene.image.PixelWriter;
 import javafx.scene.image.WritableImage;
+import javafx.scene.text.Font;
 
 public class GameController {
     private Image spriteSheet;
@@ -61,6 +62,11 @@ public class GameController {
         gameLoop = new AnimationTimer() {
             @Override
             public void handle(long now) {
+                if (gameModel.isGameOver()){
+                    stop();
+                    drawGameOver();
+                    return;
+                }
                 gameModel.update();
                 drawGame();
             }
@@ -107,6 +113,12 @@ public class GameController {
 
         scoreLabel.setText("Score: " + gameModel.getScore());
         livesLabel.setText("Lives: " + gameModel.getLives());
+    }
+
+    private void drawGameOver(){
+        graphics.setFill(Color.RED);
+        graphics.setFont(Font.font(48));
+        graphics.fillText("GAME OVER", gameCanvas.getWidth() / 2-140, gameCanvas.getHeight()/2);
     }
     private Image createPaddleSprite() {
         int sourceX = 177;
