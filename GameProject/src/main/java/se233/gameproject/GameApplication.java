@@ -12,7 +12,7 @@ public class GameApplication extends Application {
     @Override
     public void start(Stage stage) throws IOException {
         FXMLLoader loader = new FXMLLoader(
-                GameApplication.class.getResource("hello-view.fxml")
+                GameApplication.class.getResource("start-menu.fxml")
         );
 
         Scene scene = new Scene(loader.load(), 800, 640);
