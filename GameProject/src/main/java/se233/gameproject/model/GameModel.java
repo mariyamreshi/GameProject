@@ -18,6 +18,7 @@ public class GameModel {
     private boolean isGameOver;
     private boolean isStageClear;
 
+    private int scoreMultiplier = 1;
     private double ballSpeedY = -3.0;
     private double maxBallSpeedX = 5.0;
 
@@ -132,18 +133,25 @@ public class GameModel {
         }
     }
 
-    public void applyUpgrade(int choice) {
-        if (choice == 1) {
-            // +paddle size
-            paddle.setWidth(paddle.getWidth() + 30);
-        } else if (choice == 2) {
-            // -Ball Speed
-            ballSpeedY = ballSpeedY * 0.8;
-        } else if (choice == 3) {
-            // Gain Extra Life
-            lives++;
+    public void applyUpgrade(String upgradeName) {
+        switch (upgradeName) {
+            case "Increase Paddle Size":
+                paddle.setWidth(paddle.getWidth() + 30);
+                break;
+            case "Increase Paddle Speed":
+                paddle.setSpeed(paddle.getSpeed() + 5);
+                break;
+            case "Decrease Ball Speed":
+                ballSpeedY = ballSpeedY * 0.8;
+                maxBallSpeedX = maxBallSpeedX * 0.8;
+                break;
+            case "Gain Extra Life":
+                lives++;
+                break;
+            case "More Points Per Brick":
+                scoreMultiplier++;
+                break;
         }
-
         isStageClear = false;
         isBallStuck = true;
         bricks.clear();

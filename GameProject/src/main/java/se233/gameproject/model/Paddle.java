@@ -15,8 +15,6 @@ public class Paddle {
         this.speed = speed;
     }
 
-    public void setWidth(double width) {this.width = width;}
-
     public void moveLeft(double gameAreaLeft){
         x -= speed;
         if (x < gameAreaLeft){
@@ -31,6 +29,7 @@ public class Paddle {
         }
     }
 
+    // GET SET
     public double getX(){
         return x;
     }
@@ -46,5 +45,10 @@ public class Paddle {
     public double getHeight(){
         return height;
     }
+
+    public void setWidth(double width) {this.width = width;}
+
+    public double getSpeed() { return speed; }
+    public void setSpeed(double speed) { this.speed = speed; }
 
 }

@@ -19,6 +19,10 @@ import javafx.scene.image.PixelWriter;
 import javafx.scene.image.WritableImage;
 import javafx.scene.text.Font;
 
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+
 public class GameController {
     private Image spriteSheet;
     @FXML
@@ -42,6 +46,15 @@ public class GameController {
     private GraphicsContext graphics;
     private AnimationTimer gameLoop;
     private Image paddleSprite;
+
+    private final List<String> allUpgrades = Arrays.asList(
+            "Increase Paddle Size",
+            "Increase Paddle Speed",
+            "Decrease Ball Speed",
+            "Gain Extra Life",
+            "More Points Per Brick"
+    );
+    private List<String> currentUpgrades;
 
     @FXML
     public void initialize() {
@@ -165,33 +178,29 @@ public class GameController {
     private void drawStageClear() {
         gameLoop.stop();
 
-        upgradeBtn1.setText("Increase Paddle Size");
-        upgradeBtn2.setText("Decrease Ball Speed");
-        upgradeBtn3.setText("Gain Extra Life");
+        Collections.shuffle(allUpgrades);
+        currentUpgrades = allUpgrades.subList(0,3);
+
+        upgradeBtn1.setText(currentUpgrades.get(0));
+        upgradeBtn2.setText(currentUpgrades.get(1));
+        upgradeBtn3.setText(currentUpgrades.get(2));
 
         upgradeMenu.setVisible(true);
     }
     // btn event
     @FXML
-    public void selectUpgrade1() {
-        applyUpgradeAndNextStage(1);
-    }
+    public void selectUpgrade1() { applyUpgradeAndNextStage(0); }
 
     @FXML
-    public void selectUpgrade2() {
-        applyUpgradeAndNextStage(2);
-    }
+    public void selectUpgrade2() { applyUpgradeAndNextStage(1); }
 
     @FXML
-    public void selectUpgrade3() {
-        applyUpgradeAndNextStage(3);
-    }
+    public void selectUpgrade3() { applyUpgradeAndNextStage(2); }
 
-    private void applyUpgradeAndNextStage(int choice){
+    private void applyUpgradeAndNextStage(int buttonIndex){
         upgradeMenu.setVisible(false);
 
-//        gameModel.applyUpgrade(choice);
-        // i'm still working on it ♥
+        gameModel.applyUpgrade(currentUpgrades.get(buttonIndex));
 
         gameLoop.start();
         gameCanvas.requestFocus();
