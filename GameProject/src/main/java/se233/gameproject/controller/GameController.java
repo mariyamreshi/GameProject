@@ -53,6 +53,8 @@ public class GameController {
                 gameModel.getPaddle().moveLeft(0);
             } else if (event.getCode() == KeyCode.RIGHT) {
                 gameModel.getPaddle().moveRight(gameModel.getGameWidth());
+            } else if (event.getCode() == KeyCode.SPACE) {
+                gameModel.releaseBall();
             }
         });
 

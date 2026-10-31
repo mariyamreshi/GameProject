@@ -14,14 +14,26 @@ public class GameModel {
     private int score;
     private int lives;
 
+    private boolean isBallStuck;
+
     public GameModel() {
-        ball = new Ball(400, 400, 10, 3, -3);
+        ball = new Ball(400, 400, 10, 0, 0);
         paddle = new Paddle(350, 540, 100, 15, 20);
         bricks = new ArrayList<>();
 
         score = 0;
         lives = 3;
+        isBallStuck = true;
+
         createBricks();
+    }
+
+    public void releaseBall(){
+        if (isBallStuck) {
+            isBallStuck = false;
+            ball.setVelocityX(0);
+            ball.setVelocityY(-3);
+        }
     }
     private void createBricks() {
         int rows = 4;
@@ -42,45 +54,67 @@ public class GameModel {
         }
     }
         public void update() {
-            ball.move();
+            if (isBallStuck){
+                ball.setX(paddle.getX() + (paddle.getWidth()/2));
+                ball.setY(paddle.getY() - ball.getRadius());
+            } else {
+                ball.move();
 
-            if (ball.getX() - ball.getRadius() <= 0
-                    || ball.getX() + ball.getRadius() >= gameWidth) {
-                ball.bounceHorizontally();
-            }
-
-            if (ball.getY() - ball.getRadius() <= 0) {
-                ball.bounceVertically();
-            }
-            Paddle paddle = this.paddle;
-            Ball ball = this.ball;
-
-            boolean ballMovingDown = ball.getVelocityY() > 0;
-            boolean overlapsPaddle =
-                    ball.getX() + ball.getRadius() >= paddle.getX()
-                            && ball.getX() - ball.getRadius() <= paddle.getX() + paddle.getWidth()
-                            && ball.getY() + ball.getRadius() >= paddle.getY()
-                            && ball.getY() - ball.getRadius() <= paddle.getY() + paddle.getHeight();
-
-            if (ballMovingDown && overlapsPaddle) {
-                ball.bounceVertically();
-            }
-            for (Brick brick : bricks) {
-                if (brick.isDestroyed()) {
-                    continue;
+                // Wall collision logic
+                // Check if it hits the left wall AND is moving left
+                if (ball.getX() - ball.getRadius() <= 0 && ball.getVelocityX() < 0) {
+                    ball.bounceHorizontally();
+                }
+                else if (ball.getX() + ball.getRadius() >= gameWidth && ball.getVelocityX() > 0) {
+                    ball.bounceHorizontally();
                 }
 
-                boolean overlapsBrick =
-                        ball.getX() + ball.getRadius() >= brick.getX()
-                                && ball.getX() - ball.getRadius() <= brick.getX() + brick.getWidth()
-                                && ball.getY() + ball.getRadius() >= brick.getY()
-                                && ball.getY() - ball.getRadius() <= brick.getY() + brick.getHeight();
-
-                if (overlapsBrick) {
-                    brick.hit();
-                    score += 10;
+                if (ball.getY() - ball.getRadius() <= 0 && ball.getVelocityY() < 0) {
                     ball.bounceVertically();
-                    break;
+                }
+
+                // Paddle collision logic
+                Paddle paddle = this.paddle;
+                Ball ball = this.ball;
+
+                boolean ballMovingDown = ball.getVelocityY() > 0;
+                boolean overlapsPaddle =
+                        ball.getX() + ball.getRadius() >= paddle.getX()
+                                && ball.getX() - ball.getRadius() <= paddle.getX() + paddle.getWidth()
+                                && ball.getY() + ball.getRadius() >= paddle.getY()
+                                && ball.getY() - ball.getRadius() <= paddle.getY() + paddle.getHeight();
+
+                if (ballMovingDown && overlapsPaddle) {
+                    double paddleCenter = paddle.getX() + (paddle.getWidth()/2);
+                    double hitPoint = ball.getX() - paddleCenter;
+
+                    double normalizedHitPoint = hitPoint / (paddle.getWidth()/2);
+
+                    double maxVelocityX = 5.0;
+                    ball.setVelocityX(normalizedHitPoint * maxVelocityX);
+
+                    ball.setVelocityY(-3);
+
+                    ball.setY(paddle.getY() - ball.getRadius());
+                }
+                // Brick collision logic
+                for (Brick brick : bricks) {
+                    if (brick.isDestroyed()) {
+                        continue;
+                    }
+
+                    boolean overlapsBrick =
+                            ball.getX() + ball.getRadius() >= brick.getX()
+                                    && ball.getX() - ball.getRadius() <= brick.getX() + brick.getWidth()
+                                    && ball.getY() + ball.getRadius() >= brick.getY()
+                                    && ball.getY() - ball.getRadius() <= brick.getY() + brick.getHeight();
+
+                    if (overlapsBrick) {
+                        brick.hit();
+                        score += 10;
+                        ball.bounceVertically();
+                        break;
+                    }
                 }
             }
         }
