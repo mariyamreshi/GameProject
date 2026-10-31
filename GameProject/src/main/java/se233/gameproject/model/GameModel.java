@@ -16,6 +16,7 @@ public class GameModel {
 
     private boolean isBallStuck;
     private boolean isGameOver;
+    private boolean isStageClear;
 
     public GameModel() {
         ball = new Ball(400, 400, 10, 0, 0);
@@ -26,6 +27,7 @@ public class GameModel {
         lives = 3;
         isBallStuck = true;
         isGameOver = false;
+        isStageClear = false;
         createBricks();
     }
 
@@ -37,8 +39,8 @@ public class GameModel {
         }
     }
     private void createBricks() {
-        int rows = 4;
-        int columns = 8;
+        int rows = 4; // initial 4
+        int columns = 8; //initial 8
         double brickWidth = 80;
         double brickHeight = 25;
         double gap = 5;
@@ -126,6 +128,18 @@ public class GameModel {
                         break;
                     }
                 }
+
+                boolean allDestroyed = true;
+                for (Brick brick : bricks){
+                    if (!brick.isDestroyed()){
+                        allDestroyed = false;
+                        break;
+                    }
+                }
+
+                if (allDestroyed) {
+                    isStageClear = true; // no brick left
+                }
             }
         }
 
@@ -159,5 +173,9 @@ public class GameModel {
 
         public boolean isGameOver(){
             return isGameOver;
+        }
+
+        public boolean isStageClear() {
+            return isStageClear;
         }
 }

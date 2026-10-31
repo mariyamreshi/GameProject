@@ -6,6 +6,9 @@
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.control.Button?>
 <BorderPane xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="se233.gameproject.controller.GameController"
             prefWidth="800"
@@ -26,10 +29,26 @@
     </top>
 
     <center>
-        <Canvas fx:id="gameCanvas"
-                width="800"
-                height="600"
-                focusTraversable="true"/>
+        <StackPane>
+            <Canvas fx:id="gameCanvas"
+                    width="800"
+                    height="600"
+                    focusTraversable="true"/>
+
+            <VBox fx:id="upgradeMenu" alignment="CENTER" spacing="20" visible="false" style="-fx-background-color: rgba(0, 0, 0, 0.7);">
+                <Label text="STAGE CLEAR! CHOOSE AN UPGRADE"
+                       style="-fx-text-fill: white; -fx-font-size: 32px; -fx-font-weight: bold;"/>
+
+                <!-- ปุ่มตัวเลือกอัปเกรด -->
+                <Button fx:id="upgradeBtn1" onAction="#selectUpgrade1"
+                        prefWidth="300" prefHeight="50" style="-fx-font-size: 16px;"/>
+                <Button fx:id="upgradeBtn2" onAction="#selectUpgrade2"
+                        prefWidth="300" prefHeight="50" style="-fx-font-size: 16px;"/>
+                <Button fx:id="upgradeBtn3" onAction="#selectUpgrade3"
+                        prefWidth="300" prefHeight="50" style="-fx-font-size: 16px;"/>
+            </VBox>
+        </StackPane>
+
     </center>
 
 </BorderPane>

@@ -4,8 +4,10 @@ import javafx.animation.AnimationTimer;
 import javafx.fxml.FXML;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.input.KeyCode;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import se233.gameproject.model.Ball;
 import se233.gameproject.model.Brick;
@@ -24,9 +26,17 @@ public class GameController {
 
     @FXML
     private Label scoreLabel;
-
     @FXML
     private Label livesLabel;
+
+    @FXML
+    private VBox upgradeMenu;
+    @FXML
+    private Button upgradeBtn1;
+    @FXML
+    private Button upgradeBtn2;
+    @FXML
+    private Button upgradeBtn3;
 
     private GameModel gameModel;
     private GraphicsContext graphics;
@@ -65,6 +75,11 @@ public class GameController {
                 if (gameModel.isGameOver()){
                     stop();
                     drawGameOver();
+                    return;
+                }
+                if (gameModel.isStageClear()){
+                    stop();
+                    drawStageClear();
                     return;
                 }
                 gameModel.update();
@@ -144,7 +159,42 @@ public class GameController {
                 }
             }
         }
-
         return sprite;
     }
+
+    private void drawStageClear() {
+        gameLoop.stop();
+
+        upgradeBtn1.setText("Increase Paddle Size");
+        upgradeBtn2.setText("Decrease Ball Speed");
+        upgradeBtn3.setText("Gain Extra Life");
+
+        upgradeMenu.setVisible(true);
+    }
+    // btn event
+    @FXML
+    public void selectUpgrade1() {
+        applyUpgradeAndNextStage(1);
+    }
+
+    @FXML
+    public void selectUpgrade2() {
+        applyUpgradeAndNextStage(2);
+    }
+
+    @FXML
+    public void selectUpgrade3() {
+        applyUpgradeAndNextStage(3);
+    }
+
+    private void applyUpgradeAndNextStage(int choice){
+        upgradeMenu.setVisible(false);
+
+//        gameModel.applyUpgrade(choice);
+        // i'm still working on it ♥
+
+        gameLoop.start();
+        gameCanvas.requestFocus();
+    }
+
 }
