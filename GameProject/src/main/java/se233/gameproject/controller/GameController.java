@@ -52,8 +52,7 @@ public class GameController {
             "Increase Paddle Speed",
             "Decrease Ball Speed",
             "Gain Extra Life",
-            "More Points Per Brick",
-            "Dual Laser (10s)"
+            "More Points Per Brick"
     );
     private List<String> currentUpgrades;
 
@@ -160,6 +159,16 @@ public class GameController {
             );
         }
 
+        for (se233.gameproject.model.Item item : gameModel.getItems()) {
+            if (item.getType().equals("Laser")) {
+                graphics.setFill(Color.ORANGE); // Item color
+                graphics.fillRect(item.getX(), item.getY(), item.getWidth(), item.getHeight());
+
+                graphics.setFill(Color.WHITE);
+                graphics.setFont(Font.font(10));
+                graphics.fillText("L", item.getX() + 6, item.getY() + 9);
+            }
+        }
         scoreLabel.setText("Score: " + gameModel.getScore());
         livesLabel.setText("Lives: " + gameModel.getLives());
     }

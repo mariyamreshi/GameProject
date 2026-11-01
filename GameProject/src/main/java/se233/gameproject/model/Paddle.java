@@ -29,7 +29,11 @@ public class Paddle {
         }
     }
 
-    // GET SET
+    // SET
+    public void setX(double x) { this.x = x;}
+    public void setSpeed(double speed) { this.speed = speed; }
+
+    // GET
     public double getX(){
         return x;
     }
@@ -49,6 +53,5 @@ public class Paddle {
     public void setWidth(double width) {this.width = width;}
 
     public double getSpeed() { return speed; }
-    public void setSpeed(double speed) { this.speed = speed; }
 
 }
