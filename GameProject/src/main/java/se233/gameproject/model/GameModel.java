@@ -56,11 +56,20 @@ public class GameModel {
         double startX = 37.5;
         double startY = 60;
 
+        java.util.Random random = new java.util.Random();
+
         for (int row = 0; row < rows; row++) {
             for (int column = 0; column < columns; column++) {
                 double x = startX + column * (brickWidth + gap);
                 double y = startY + row * (brickHeight + gap);
-                bricks.add(new Brick(x, y, brickWidth, brickHeight));
+
+                int rand = random.nextInt(100);
+                int type = 0;
+                if (rand >= 70 && rand <85) type = 1;
+                else if (rand >= 85 && rand < 95) type = 2;
+                else if (rand >= 95) type=3;
+
+                bricks.add(new Brick(x, y, brickWidth, brickHeight, type));
             }
         }
     }
@@ -119,7 +128,10 @@ public class GameModel {
                                 && ball.getY() - ball.getRadius() <= brick.getY() + brick.getHeight();
                 if (overlapsBrick) {
                     brick.hit();
-                    score += (10 * scoreMultiplier);
+                    if (brick.isDestroyed()){
+                        score += (brick.getScoreValue() * scoreMultiplier);
+                        if (brick.getType() == 3) lives++;
+                    }
                     ball.bounceVertically();
                     break;
                 }
@@ -159,7 +171,10 @@ public class GameModel {
                             laser.getY() <= brick.getY() + brick.getHeight();
                     if (overlapsBrick) {
                         brick.hit();
-                        score += (10 * scoreMultiplier);
+                        if (brick.isDestroyed()) {
+                            score += (brick.getScoreValue() * scoreMultiplier);
+                            if (brick.getType() == 3) lives++;
+                        }
                         laser.deactivate();
                         break;
                     }

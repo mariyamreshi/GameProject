@@ -112,7 +112,17 @@ public class GameController {
 
         for (Brick brick : gameModel.getBricks()) {
             if (!brick.isDestroyed()) {
-                graphics.setFill(Color.CORNFLOWERBLUE);
+                if (brick.getType() == 1){
+                    if (brick.getHp() == 2) graphics.setFill(Color.DARKGRAY);
+                    else graphics.setFill(Color.LIGHTGRAY);
+                } else if (brick.getType() == 2) {
+                    graphics.setFill(Color.GOLD);
+                } else if (brick.getType() == 3) {
+                    graphics.setFill(Color.MAGENTA);
+                } else {
+                    graphics.setFill(Color.CORNFLOWERBLUE);
+                }
+
                 graphics.fillRect(
                         brick.getX(),
                         brick.getY(),
