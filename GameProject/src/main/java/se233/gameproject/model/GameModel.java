@@ -115,7 +115,7 @@ public class GameModel {
                                 && ball.getY() - ball.getRadius() <= brick.getY() + brick.getHeight();
                 if (overlapsBrick) {
                     brick.hit();
-                    score += 10;
+                    score += (10 * scoreMultiplier);
                     ball.bounceVertically();
                     break;
                 }
