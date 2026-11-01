@@ -1,7 +1,6 @@
 package se233.gameproject.model;
 import java.util.ArrayList;
 import java.util.List;
-import javafx.scene.image.Image;
 
 public class GameModel {
     private final double gameWidth = 800;
@@ -24,10 +23,14 @@ public class GameModel {
 
     private int stageLevel = 1;
 
+    private final List<Laser> lasers;
+    private int laserActiveFrames = 0;
+
     public GameModel() {
         ball = new Ball(400, 400, 10, 0, 0);
         paddle = new Paddle(350, 540, 100, 15, 20);
         bricks = new ArrayList<>();
+        lasers = new ArrayList<>();
 
         score = 0;
         lives = 3;
@@ -131,6 +134,38 @@ public class GameModel {
             if (allDestroyed) {
                 isStageClear = true; // no brick left
             }
+
+            //Laser
+            if (laserActiveFrames > 0) {
+                laserActiveFrames--;
+
+                if (laserActiveFrames % 15 == 0){
+                    lasers.add(new Laser(paddle.getX() + 10, paddle.getY()));
+                    lasers.add(new Laser(paddle.getX() + paddle.getWidth() - 15, paddle.getY()));
+                }
+            }
+
+            for (Laser laser : lasers) {
+                if (!laser.isActive()) continue;
+                laser.move();
+
+                for (Brick brick : bricks){
+                    if (brick.isDestroyed()) continue;
+
+                    boolean overlapsBrick =
+                            laser.getX() + laser.getWidth() >= brick.getX() &&
+                            laser.getX() <= brick.getX() + brick.getWidth() &&
+                            laser.getY() + laser.getHeight() >= brick.getY() &&
+                            laser.getY() <= brick.getY() + brick.getHeight();
+                    if (overlapsBrick) {
+                        brick.hit();
+                        score += (10 * scoreMultiplier);
+                        laser.deactivate();
+                        break;
+                    }
+                }
+            }
+            lasers.removeIf(l -> !l.isActive());
         }
     }
 
@@ -152,6 +187,9 @@ public class GameModel {
             case "More Points Per Brick":
                 scoreMultiplier++;
                 break;
+            case "Dual Laser (10s)":
+                laserActiveFrames = 600; // (60fps * 10)
+                break;
         }
         stageLevel++;
         isStageClear = false;
@@ -160,39 +198,23 @@ public class GameModel {
         createBricks();
     }
 
-        public double getGameWidth() {
-            return gameWidth;
-        }
+    public double getGameWidth() { return gameWidth; }
 
-        public double getGameHeight() {
-            return gameHeight;
-        }
+    public double getGameHeight() { return gameHeight; }
 
-        public Ball getBall() {
-            return ball;
-        }
+    public Ball getBall() { return ball; }
 
-        public Paddle getPaddle() {
-            return paddle;
-        }
+    public Paddle getPaddle() { return paddle; }
 
-        public List<Brick> getBricks() {
-            return bricks;
-        }
+    public List<Brick> getBricks() { return bricks; }
 
-        public int getScore() {
-            return score;
-        }
+    public int getScore() {return score;}
 
-        public int getLives() {
-            return lives;
-        }
+    public int getLives() {return lives;}
 
-        public boolean isGameOver(){
-            return isGameOver;
-        }
+    public boolean isGameOver(){return isGameOver;}
 
-        public boolean isStageClear() {
-            return isStageClear;
-        }
+    public boolean isStageClear() { return isStageClear; }
+
+    public List<Laser> getLasers() { return lasers; }
 }
