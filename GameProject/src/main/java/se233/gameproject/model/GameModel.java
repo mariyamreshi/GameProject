@@ -22,6 +22,8 @@ public class GameModel {
     private double ballSpeedY = -3.0;
     private double maxBallSpeedX = 5.0;
 
+    private int stageLevel = 1;
+
     public GameModel() {
         ball = new Ball(400, 400, 10, 0, 0);
         paddle = new Paddle(350, 540, 100, 15, 20);
@@ -43,8 +45,8 @@ public class GameModel {
         }
     }
     private void createBricks() {
-        int rows = 2; // initial 4
-        int columns = 2; //initial 8
+        int rows = Math.min(2 + stageLevel, 8); // initial 4
+        int columns = 8; //initial 8
         double brickWidth = 80;
         double brickHeight = 25;
         double gap = 5;
@@ -55,7 +57,6 @@ public class GameModel {
             for (int column = 0; column < columns; column++) {
                 double x = startX + column * (brickWidth + gap);
                 double y = startY + row * (brickHeight + gap);
-
                 bricks.add(new Brick(x, y, brickWidth, brickHeight));
             }
         }
@@ -152,6 +153,7 @@ public class GameModel {
                 scoreMultiplier++;
                 break;
         }
+        stageLevel++;
         isStageClear = false;
         isBallStuck = true;
         bricks.clear();
