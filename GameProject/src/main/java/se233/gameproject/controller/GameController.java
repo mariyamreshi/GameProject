@@ -87,15 +87,28 @@ public class GameController {
             public void handle(long now) {
                 if (gameModel.isGameOver()){
                     stop();
+                    gameCanvas.setRotate(0);
                     drawGameOver();
                     return;
                 }
                 if (gameModel.isStageClear()){
                     stop();
+                    gameCanvas.setRotate(0);
                     drawStageClear();
                     return;
                 }
                 gameModel.update();
+
+                int dizzyFrames = gameModel.getDizzyActiveFrames();
+                if (dizzyFrames > 0) {
+                    double elapsedFrames = GameModel.DIZZY_DURATION_FRAMES - dizzyFrames;
+                    gameCanvas.setRotate(
+                            elapsedFrames * 720.0 / GameModel.DIZZY_DURATION_FRAMES
+                    );
+                } else {
+                    gameCanvas.setRotate(0);
+                }
+
                 drawGame();
             }
         };
@@ -160,13 +173,18 @@ public class GameController {
         }
 
         for (se233.gameproject.model.Item item : gameModel.getItems()) {
-            if (item.getType().equals("Laser")) {
-                graphics.setFill(Color.ORANGE); // Item color
+            if ("Laser".equals(item.getType())) {
+                graphics.setFill(Color.ORANGE);
                 graphics.fillRect(item.getX(), item.getY(), item.getWidth(), item.getHeight());
-
                 graphics.setFill(Color.WHITE);
                 graphics.setFont(Font.font(10));
                 graphics.fillText("L", item.getX() + 6, item.getY() + 9);
+            } else if ("Dizzy".equals(item.getType())) {
+                graphics.setFill(Color.MEDIUMPURPLE);
+                graphics.fillOval(item.getX(), item.getY(), item.getWidth(), item.getHeight());
+                graphics.setFill(Color.WHITE);
+                graphics.setFont(Font.font(9));
+                graphics.fillText("D", item.getX() + 7, item.getY() + 9);
             }
         }
         scoreLabel.setText("Score: " + gameModel.getScore());
