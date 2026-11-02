@@ -1,8 +1,12 @@
 package se233.gameproject.model;
 import java.util.ArrayList;
 import java.util.List;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class GameModel {
+    private static final Logger logger = LogManager.getLogger(GameModel.class);
+
     private final double gameWidth = 800;
     private final double gameHeight = 600;
 
@@ -41,6 +45,7 @@ public class GameModel {
         isGameOver = false;
         isStageClear = false;
         createBricks();
+        logger.info("Game started with {} lives", lives);
     }
 
     public void releaseBall(){
@@ -48,6 +53,7 @@ public class GameModel {
             isBallStuck = false;
             ball.setVelocityX(0);
             ball.setVelocityY(ballSpeedY);
+            logger.debug("Player released the ball");
         }
     }
 
@@ -97,6 +103,7 @@ public class GameModel {
             }
             if (ball.getY() - ball.getRadius() >= gameHeight){
                 lives--;
+                logger.warn("Player lost a life; {} lives remain", lives);
                 if (lives > 0) {
                     isBallStuck = true;
                     paddle.setX(350);
@@ -105,6 +112,7 @@ public class GameModel {
                     laserActiveFrames = 0;
                 } else {
                     isGameOver = true;
+                    logger.warn("Game over: all lives have been lost");
                 }
             }
 
@@ -138,10 +146,18 @@ public class GameModel {
                                 && ball.getY() + ball.getRadius() >= brick.getY()
                                 && ball.getY() - ball.getRadius() <= brick.getY() + brick.getHeight();
                 if (overlapsBrick) {
+                    logger.debug("Brick hit: type={}", brick.getType());
                     brick.hit();
                     if (brick.isDestroyed()){
-                        score += (brick.getScoreValue() * scoreMultiplier);
-                        if (brick.getType() == 3) lives++;
+                        int points = brick.getScoreValue() * scoreMultiplier;
+                        score += points;
+                        logger.info("Brick destroyed: type={}, points={}, totalScore={}",
+                                brick.getType(), points, score);
+
+                        if (brick.getType() == 3) {
+                            lives++;
+                            logger.info("Special brick awarded an extra life; lives={}", lives);
+                        }
 
                         // Item drop logic
                         java.util.Random random = new java.util.Random();
@@ -162,8 +178,9 @@ public class GameModel {
                     break;
                 }
             }
-            if (allDestroyed) {
+            if (allDestroyed && !isStageClear) {
                 isStageClear = true;
+                logger.info("Stage {} cleared", stageLevel);
             }
 
             // Laser generation logic
@@ -189,10 +206,18 @@ public class GameModel {
                                     laser.getY() + laser.getHeight() >= brick.getY() &&
                                     laser.getY() <= brick.getY() + brick.getHeight();
                     if (overlapsBrick) {
+                        logger.debug("Laser hit brick type={}", brick.getType());
                         brick.hit();
                         if (brick.isDestroyed()) {
-                            score += (brick.getScoreValue() * scoreMultiplier);
-                            if (brick.getType() == 3) lives++;
+                            int points = brick.getScoreValue() * scoreMultiplier;
+                            score += points;
+                            logger.info("Brick destroyed: type={}, points={}, totalScore={}",
+                                    brick.getType(), points, score);
+
+                            if (brick.getType() == 3) {
+                                lives++;
+                                logger.info("Special brick awarded an extra life; lives={}", lives);
+                            }
 
                             // Item drop logic
                             java.util.Random random = new java.util.Random();
@@ -222,6 +247,7 @@ public class GameModel {
                     item.deactivate();
                     if (item.getType().equals("Laser")) {
                         laserActiveFrames = 600; // 10 seconds
+                        logger.info("Player collected Laser item; dual lasers active for 10 seconds");
                     }
                 }
             }
@@ -230,6 +256,7 @@ public class GameModel {
     }
 
     public void applyUpgrade(String upgradeName) {
+        logger.info("Player selected upgrade: {}", upgradeName);
         switch (upgradeName) {
             case "Increase Paddle Size":
                 paddle.setWidth(paddle.getWidth() + 30);
@@ -249,6 +276,7 @@ public class GameModel {
                 break;
         }
         stageLevel++;
+        logger.info("Starting stage {}", stageLevel);
         isStageClear = false;
         isBallStuck = true;
         bricks.clear();
