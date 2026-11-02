@@ -2,18 +2,103 @@
 
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.shape.Circle?>
+<?import javafx.scene.shape.Ellipse?>
 
-<VBox alignment="CENTER" spacing="40.0" xmlns:fx="http://javafx.com/fxml/1"
-      fx:controller="se233.gameproject.controller.StartMenuController"
-      prefWidth="800" prefHeight="640"
-      style="-fx-background-color: #101626;">
+<StackPane fx:id="root" prefWidth="800" prefHeight="640"
+           focusTraversable="true"
+           style="-fx-background-color: linear-gradient(to bottom right, #f8dfe0, #f9eadc 52%, #e4f0e8); -fx-font-family: 'Trebuchet MS';"
+           xmlns:fx="http://javafx.com/fxml/1"
+           fx:controller="se233.gameproject.controller.StartMenuController">
 
-    <Label text="Brick Breaker"
-           style="-fx-text-fill: white; -fx-font-size: 48px; -fx-font-weight: bold;"/>
+    <AnchorPane mouseTransparent="true" prefWidth="800" prefHeight="640">
+        <Circle layoutX="15" layoutY="300" radius="72"
+                style="-fx-fill: #c6e3df; -fx-opacity: 0.9;"/>
+        <Circle layoutX="770" layoutY="565" radius="58"
+                style="-fx-fill: #f5c4c9; -fx-opacity: 0.8;"/>
+        <Circle layoutX="110" layoutY="40" radius="3" style="-fx-fill: #fffdf8;"/>
+        <Circle layoutX="685" layoutY="90" radius="4" style="-fx-fill: #fffdf8;"/>
+        <Circle layoutX="700" layoutY="585" radius="3" style="-fx-fill: #fffdf8;"/>
+        <Circle layoutX="90" layoutY="555" radius="3" style="-fx-fill: #fffdf8;"/>
+        <Label layoutX="158" layoutY="112" text="✦"
+               style="-fx-text-fill: #f49a83; -fx-font-size: 25px;"/>
+        <Label layoutX="625" layoutY="480" text="✦"
+               style="-fx-text-fill: #8dc8c5; -fx-font-size: 25px;"/>
+        <Circle layoutX="675" layoutY="205" radius="65"
+                style="-fx-fill: transparent; -fx-stroke: #d8d0dc; -fx-stroke-width: 1.5px; -fx-opacity: 0.75;"/>
+    </AnchorPane>
 
-    <Button text="Start Game"
-            onAction="#onStartButtonClick"
-            style="-fx-font-size: 24px; -fx-background-color: cornflowerblue; -fx-text-fill: white; -fx-cursor: hand;"/>
+    <VBox alignment="TOP_CENTER" prefWidth="700" prefHeight="560"
+          maxWidth="700" maxHeight="560"
+          style="-fx-background-color: #fffaf6; -fx-background-radius: 24px; -fx-border-color: #594b7d; -fx-border-width: 2px; -fx-border-radius: 24px; -fx-effect: dropshadow(gaussian, rgba(65, 51, 92, 0.24), 0, 9, 0, 8);">
+        <HBox alignment="CENTER_LEFT" spacing="8" prefHeight="44"
+              style="-fx-padding: 0 18px; -fx-background-color: #f4e9e7; -fx-background-radius: 22px 22px 0 0; -fx-border-color: transparent transparent #594b7d transparent; -fx-border-width: 0 0 2px 0;">
+            <Circle radius="5" style="-fx-fill: #f28f91; -fx-stroke: #594b7d; -fx-stroke-width: 1.3px;"/>
+            <Circle radius="5" style="-fx-fill: #ffd36c; -fx-stroke: #594b7d; -fx-stroke-width: 1.3px;"/>
+            <Circle radius="5" style="-fx-fill: #87c9b5; -fx-stroke: #594b7d; -fx-stroke-width: 1.3px;"/>
+            <Label text="STARPOP ARCADE" HBox.hgrow="ALWAYS"
+                   style="-fx-text-fill: #594b7d; -fx-font-size: 11px; -fx-font-weight: bold; -fx-letter-spacing: 2px; -fx-alignment: center;"/>
+            <Label text="✦" style="-fx-text-fill: #8dc8c5; -fx-font-size: 18px;"/>
+        </HBox>
 
-</VBox>
+        <VBox alignment="CENTER" spacing="8" VBox.vgrow="ALWAYS"
+              style="-fx-padding: 12px 30px 18px 30px; -fx-background-color: transparent;">
+            <StackPane prefWidth="130" prefHeight="100">
+                <Ellipse radiusX="57" radiusY="12" rotate="-12"
+                         style="-fx-fill: #c796dc; -fx-stroke: #594b7d; -fx-stroke-width: 2px; -fx-effect: dropshadow(gaussian, rgba(89, 75, 125, 0.18), 8, 0.12, 0, 3);"/>
+                <Circle radius="38"
+                        style="-fx-fill: linear-gradient(to bottom right, #ffe78b, #ffd05a 70%, #ffc849); -fx-stroke: #594b7d; -fx-stroke-width: 2.5px; -fx-effect: dropshadow(gaussian, rgba(89, 75, 125, 0.22), 12, 0.16, 0, 5);"/>
+                <Circle radius="6" translateX="-15" translateY="-19"
+                        style="-fx-fill: rgba(255, 255, 255, 0.48);"/>
+                <VBox alignment="CENTER" spacing="-2" mouseTransparent="true">
+                    <HBox alignment="CENTER" spacing="15">
+                        <Circle radius="3" style="-fx-fill: #594b7d;"/>
+                        <Circle radius="3" style="-fx-fill: #594b7d;"/>
+                    </HBox>
+                    <Label text="⌣" style="-fx-text-fill: #594b7d; -fx-font-size: 19px; -fx-font-weight: bold;"/>
+                </VBox>
+                <Label text="✦" StackPane.alignment="TOP_LEFT"
+                       translateX="13" translateY="14"
+                       style="-fx-text-fill: #f28f83; -fx-font-size: 19px; -fx-effect: dropshadow(gaussian, rgba(255, 255, 255, 0.75), 5, 0.25, 0, 0);"/>
+                <Label text="✦" StackPane.alignment="BOTTOM_RIGHT"
+                       translateX="-12" translateY="-8"
+                       style="-fx-text-fill: #83c8c1; -fx-font-size: 19px; -fx-effect: dropshadow(gaussian, rgba(255, 255, 255, 0.75), 5, 0.25, 0, 0);"/>
+            </StackPane>
+
+            <Label text="WELCOME TO"
+                   style="-fx-text-fill: #8b7ba7; -fx-font-size: 12px; -fx-font-weight: bold; -fx-letter-spacing: 4px;"/>
+            <HBox alignment="CENTER" spacing="0">
+                <Label text="STAR"
+                       style="-fx-text-fill: #594b7d; -fx-font-size: 57px; -fx-font-weight: bold; -fx-effect: dropshadow(gaussian, rgba(89, 75, 125, 0.19), 2, 0.2, 0, 3);"/>
+                <Label text="POP!"
+                       style="-fx-text-fill: #f27f7d; -fx-font-size: 57px; -fx-font-weight: bold; -fx-effect: dropshadow(gaussian, rgba(89, 75, 125, 0.19), 2, 0.2, 0, 3);"/>
+            </HBox>
+            <HBox alignment="CENTER" spacing="10" style="-fx-padding: 0 0 8px 0;">
+                <Circle radius="1.5" style="-fx-fill: #b8a9cb;"/>
+                <Label text="BRICK BREAKER"
+                       style="-fx-text-fill: #82739c; -fx-font-size: 11px; -fx-font-weight: bold; -fx-letter-spacing: 3px;"/>
+                <Circle radius="1.5" style="-fx-fill: #b8a9cb;"/>
+            </HBox>
+
+            <Button text="PRESS SPACE TO START" onAction="#onStartButtonClick"
+                    prefWidth="430" prefHeight="72"
+                    style="-fx-background-color: #f48681; -fx-background-radius: 16px; -fx-border-color: #594b7d; -fx-border-width: 2px; -fx-border-radius: 16px; -fx-effect: dropshadow(gaussian, rgba(65, 51, 92, 0.5), 0, 5, 0, 5); -fx-text-fill: white; -fx-font-size: 19px; -fx-font-weight: bold; -fx-letter-spacing: 1px; -fx-cursor: hand;"/>
+
+            <HBox alignment="CENTER" spacing="8" translateY="15">
+                <Label text="MOVE"
+                       style="-fx-text-fill: #9487a6; -fx-font-size: 9px; -fx-font-weight: bold; -fx-letter-spacing: 1.4px;"/>
+                <Label text="←"
+                       style="-fx-min-width: 25px; -fx-min-height: 24px; -fx-alignment: center; -fx-background-color: #fffdfb; -fx-background-radius: 6px; -fx-border-color: #75658f; -fx-border-width: 1.5px; -fx-border-radius: 6px; -fx-effect: dropshadow(gaussian, rgba(65, 51, 92, 0.25), 0, 2, 0, 2); -fx-text-fill: #594b7d; -fx-font-size: 13px; -fx-font-weight: bold;"/>
+                <Label text="→"
+                       style="-fx-min-width: 25px; -fx-min-height: 24px; -fx-alignment: center; -fx-background-color: #fffdfb; -fx-background-radius: 6px; -fx-border-color: #75658f; -fx-border-width: 1.5px; -fx-border-radius: 6px; -fx-effect: dropshadow(gaussian, rgba(65, 51, 92, 0.25), 0, 2, 0, 2); -fx-text-fill: #594b7d; -fx-font-size: 13px; -fx-font-weight: bold;"/>
+                <Label text="•" style="-fx-padding: 0 7px; -fx-text-fill: #c4b6ca; -fx-font-size: 10px;"/>
+                <Label text="SPACE TO LAUNCH"
+                       style="-fx-text-fill: #9487a6; -fx-font-size: 9px; -fx-font-weight: bold; -fx-letter-spacing: 1.4px;"/>
+            </HBox>
+        </VBox>
+    </VBox>
+</StackPane>

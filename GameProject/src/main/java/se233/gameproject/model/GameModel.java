@@ -29,6 +29,8 @@ public class GameModel {
 
     private final List<Laser> lasers;
     private int laserActiveFrames = 0;
+    public static final int DIZZY_DURATION_FRAMES = 300; // About 5 seconds
+    private int dizzyActiveFrames = 0;
 
     private final List<Item> items;
 
@@ -85,6 +87,9 @@ public class GameModel {
     }
 
     public void update() {
+        if (dizzyActiveFrames > 0) {
+            dizzyActiveFrames--;
+        }
         if (isBallStuck){
             ball.setX(paddle.getX() + (paddle.getWidth()/2));
             ball.setY(paddle.getY() - ball.getRadius());
@@ -159,11 +164,7 @@ public class GameModel {
                             logger.info("Special brick awarded an extra life; lives={}", lives);
                         }
 
-                        // Item drop logic
-                        java.util.Random random = new java.util.Random();
-                        if (random.nextInt(100) < 10) {
-                            items.add(new Item(brick.getX() + (brick.getWidth() / 2) - 10, brick.getY(), "Laser"));
-                        }
+                        dropRandomItem(brick);
                     }
                     ball.bounceVertically();
                     break;
@@ -219,11 +220,7 @@ public class GameModel {
                                 logger.info("Special brick awarded an extra life; lives={}", lives);
                             }
 
-                            // Item drop logic
-                            java.util.Random random = new java.util.Random();
-                            if (random.nextInt(100) < 10) {
-                                items.add(new Item(brick.getX() + (brick.getWidth() / 2) - 10, brick.getY(), "Laser"));
-                            }
+                            dropRandomItem(brick);
                         }
                         laser.deactivate();
                         break;
@@ -245,14 +242,34 @@ public class GameModel {
 
                 if (itemOverlapsPaddle) {
                     item.deactivate();
-                    if (item.getType().equals("Laser")) {
+                    if ("Laser".equals(item.getType())) {
                         laserActiveFrames = 600; // 10 seconds
                         logger.info("Player collected Laser item; dual lasers active for 10 seconds");
+                    } else if ("Dizzy".equals(item.getType())) {
+                        dizzyActiveFrames = DIZZY_DURATION_FRAMES;
+                        logger.info("Player collected Dizzy pickup; playfield spins for 5 seconds");
                     }
                 }
             }
             items.removeIf(i -> !i.isActive());
         }
+    }
+
+    private void dropRandomItem(Brick brick) {
+        int roll = new java.util.Random().nextInt(100);
+        String type;
+
+        if (roll < 10) {
+            type = "Laser";
+        } else if (roll < 20) {
+            type = "Dizzy";
+        } else {
+            return;
+        }
+
+        double itemX = brick.getX() + brick.getWidth() / 2 - 10;
+        items.add(new Item(itemX, brick.getY(), type));
+        logger.info("Brick dropped a {} pickup", type);
     }
 
     public void applyUpgrade(String upgradeName) {
@@ -286,6 +303,7 @@ public class GameModel {
         lasers.clear();
         items.clear();
         laserActiveFrames = 0;
+        dizzyActiveFrames = 0;
     }
 
     public double getGameWidth() { return gameWidth; }
@@ -299,4 +317,5 @@ public class GameModel {
     public boolean isStageClear() { return isStageClear; }
     public List<Laser> getLasers() { return lasers; }
     public List<Item> getItems() { return items; }
+    public int getDizzyActiveFrames() { return dizzyActiveFrames; }
 }
