@@ -61,7 +61,7 @@ public class GameModel {
 
     private void createBricks() {
         int rows = Math.min(2 + stageLevel, 8);
-        int columns = 4;
+        int columns = 8;
         double brickWidth = 80;
         double brickHeight = 25;
         double gap = 5;
