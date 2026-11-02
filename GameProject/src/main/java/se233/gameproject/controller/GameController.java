@@ -212,23 +212,24 @@ public class GameController {
         for (se233.gameproject.model.Item item : gameModel.getItems()) {
             if (item.getType().equals("Laser")) {
                 graphics.drawImage(laserItemSprite, item.getX(), item.getY(), item.getWidth(), item.getHeight());
-            if ("Laser".equals(item.getType())) {
-                graphics.setFill(Color.ORANGE);
-                graphics.fillRect(item.getX(), item.getY(), item.getWidth(), item.getHeight());
-                graphics.setFill(Color.WHITE);
-                graphics.setFont(Font.font(10));
-                graphics.fillText("L", item.getX() + 6, item.getY() + 9);
-            } else if ("Dizzy".equals(item.getType())) {
-                graphics.setFill(Color.MEDIUMPURPLE);
-                graphics.fillOval(item.getX(), item.getY(), item.getWidth(), item.getHeight());
-                graphics.setFill(Color.WHITE);
-                graphics.setFont(Font.font(9));
-                graphics.fillText("D", item.getX() + 7, item.getY() + 9);
+                if ("Laser".equals(item.getType())) {
+                    graphics.setFill(Color.ORANGE);
+                    graphics.fillRect(item.getX(), item.getY(), item.getWidth(), item.getHeight());
+                    graphics.setFill(Color.WHITE);
+                    graphics.setFont(Font.font(10));
+                    graphics.fillText("L", item.getX() + 6, item.getY() + 9);
+                } else if ("Dizzy".equals(item.getType())) {
+                    graphics.setFill(Color.MEDIUMPURPLE);
+                    graphics.fillOval(item.getX(), item.getY(), item.getWidth(), item.getHeight());
+                    graphics.setFill(Color.WHITE);
+                    graphics.setFont(Font.font(9));
+                    graphics.fillText("D", item.getX() + 7, item.getY() + 9);
+                }
             }
-        }
 
-        scoreLabel.setText("Score: " + gameModel.getScore());
-        livesLabel.setText("Lives: " + gameModel.getLives());
+            scoreLabel.setText("Score: " + gameModel.getScore());
+            livesLabel.setText("Lives: " + gameModel.getLives());
+        }
     }
 
     private void drawGameOver(){
