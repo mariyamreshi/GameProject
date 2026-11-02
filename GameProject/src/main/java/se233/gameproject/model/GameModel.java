@@ -245,8 +245,8 @@ public class GameModel {
                 if (itemOverlapsPaddle) {
                     item.deactivate();
                     if ("Laser".equals(item.getType())) {
-                        laserActiveFrames = 240; // 10 seconds
-                        logger.info("Player collected Laser item; dual lasers active for 10 seconds");
+                        laserActiveFrames = 240; // 4 seconds
+                        logger.info("Player collected Laser item; dual lasers active for 4 seconds");
                     } else if ("Dizzy".equals(item.getType())) {
                         dizzyActiveFrames = DIZZY_DURATION_FRAMES;
                         logger.info("Player collected Dizzy pickup; playfield spins for 5 seconds");
@@ -281,10 +281,8 @@ public class GameModel {
             ball.bounceVertically();
         } else {
             // If the ball overlaps a corner, bounce along the shallower overlap.
-            double overlapX = Math.min(ball.getX() + radius, brickRight)
-                    - Math.max(ball.getX() - radius, brick.getX());
-            double overlapY = Math.min(ball.getY() + radius, brickBottom)
-                    - Math.max(ball.getY() - radius, brick.getY());
+            double overlapX = Math.min(ball.getX() + radius, brickRight) - Math.max(ball.getX() - radius, brick.getX());
+            double overlapY = Math.min(ball.getY() + radius, brickBottom) - Math.max(ball.getY() - radius, brick.getY());
 
             if (overlapX < overlapY) {
                 if (ball.getX() < brick.getX() + brick.getWidth() / 2) {
@@ -317,7 +315,7 @@ public class GameModel {
         }
 
         double itemWidth = "Dizzy".equals(type) ? 28 : 20;
-        double itemX = brick.getX() + brick.getWidth() / 2 - itemWidth / 2;
+        double itemX = brick.getX() + (brick.getWidth() / 2) - (itemWidth / 2);
         items.add(new Item(itemX, brick.getY(), type));
         logger.info("Brick dropped a {} pickup", type);
     }
