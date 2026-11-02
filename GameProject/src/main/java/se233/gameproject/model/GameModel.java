@@ -245,7 +245,7 @@ public class GameModel {
                 if (itemOverlapsPaddle) {
                     item.deactivate();
                     if ("Laser".equals(item.getType())) {
-                        laserActiveFrames = 600; // 10 seconds
+                        laserActiveFrames = 240; // 10 seconds
                         logger.info("Player collected Laser item; dual lasers active for 10 seconds");
                     } else if ("Dizzy".equals(item.getType())) {
                         dizzyActiveFrames = DIZZY_DURATION_FRAMES;
