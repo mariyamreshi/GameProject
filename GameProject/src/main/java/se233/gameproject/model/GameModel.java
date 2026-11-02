@@ -61,7 +61,7 @@ public class GameModel {
 
     private void createBricks() {
         int rows = Math.min(2 + stageLevel, 8);
-        int columns = 8;
+        int columns = 4;
         double brickWidth = 80;
         double brickHeight = 25;
         double gap = 5;
@@ -94,6 +94,8 @@ public class GameModel {
             ball.setX(paddle.getX() + (paddle.getWidth()/2));
             ball.setY(paddle.getY() - ball.getRadius());
         } else {
+            double previousBallX = ball.getX();
+            double previousBallY = ball.getY();
             ball.move();
 
             // Wall collision logic
@@ -166,7 +168,7 @@ public class GameModel {
 
                         dropRandomItem(brick);
                     }
-                    ball.bounceVertically();
+                    bounceBallOffBrick(brick, previousBallX, previousBallY);
                     break;
                 }
             }
@@ -255,6 +257,53 @@ public class GameModel {
         }
     }
 
+    private void bounceBallOffBrick(Brick brick, double previousX, double previousY) {
+        double radius = ball.getRadius();
+        double brickRight = brick.getX() + brick.getWidth();
+        double brickBottom = brick.getY() + brick.getHeight();
+
+        boolean hitFromLeft = previousX + radius <= brick.getX();
+        boolean hitFromRight = previousX - radius >= brickRight;
+        boolean hitFromTop = previousY + radius <= brick.getY();
+        boolean hitFromBottom = previousY - radius >= brickBottom;
+
+        if (hitFromLeft) {
+            ball.setX(brick.getX() - radius);
+            ball.bounceHorizontally();
+        } else if (hitFromRight) {
+            ball.setX(brickRight + radius);
+            ball.bounceHorizontally();
+        } else if (hitFromTop) {
+            ball.setY(brick.getY() - radius);
+            ball.bounceVertically();
+        } else if (hitFromBottom) {
+            ball.setY(brickBottom + radius);
+            ball.bounceVertically();
+        } else {
+            // If the ball overlaps a corner, bounce along the shallower overlap.
+            double overlapX = Math.min(ball.getX() + radius, brickRight)
+                    - Math.max(ball.getX() - radius, brick.getX());
+            double overlapY = Math.min(ball.getY() + radius, brickBottom)
+                    - Math.max(ball.getY() - radius, brick.getY());
+
+            if (overlapX < overlapY) {
+                if (ball.getX() < brick.getX() + brick.getWidth() / 2) {
+                    ball.setX(brick.getX() - radius);
+                } else {
+                    ball.setX(brickRight + radius);
+                }
+                ball.bounceHorizontally();
+            } else {
+                if (ball.getY() < brick.getY() + brick.getHeight() / 2) {
+                    ball.setY(brick.getY() - radius);
+                } else {
+                    ball.setY(brickBottom + radius);
+                }
+                ball.bounceVertically();
+            }
+        }
+    }
+
     private void dropRandomItem(Brick brick) {
         int roll = new java.util.Random().nextInt(100);
         String type;
@@ -267,7 +316,8 @@ public class GameModel {
             return;
         }
 
-        double itemX = brick.getX() + brick.getWidth() / 2 - 10;
+        double itemWidth = "Dizzy".equals(type) ? 28 : 20;
+        double itemX = brick.getX() + brick.getWidth() / 2 - itemWidth / 2;
         items.add(new Item(itemX, brick.getY(), type));
         logger.info("Brick dropped a {} pickup", type);
     }
@@ -313,6 +363,7 @@ public class GameModel {
     public List<Brick> getBricks() { return bricks; }
     public int getScore() {return score;}
     public int getLives() {return lives;}
+    public int getStageLevel() { return stageLevel; }
     public boolean isGameOver(){return isGameOver;}
     public boolean isStageClear() { return isStageClear; }
     public List<Laser> getLasers() { return lasers; }
