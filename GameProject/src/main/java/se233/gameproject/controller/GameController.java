@@ -144,7 +144,7 @@ public class GameController {
         double bw = 80, bh = 25; // Standard brick dimensions
 
         // 1. Load background, ball, laser, and paddle
-        bgImage = loadImageSafe(path + "backgrounds/bg3_lavender_stars.png", 800, 600);
+        bgImage = loadImageSafe(path + "backgrounds/bg4_sky_gingham.png", 800, 600);
         ballImage = loadImageSafe(path + "extras/ball.png", 15, 15);
         laserProjectile = loadImageSafe(path + "extras/laser.png", 10, 20);
         paddleNormal = loadImageSafe(path + "paddle/paddle_normal.png", 100, 20);
