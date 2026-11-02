@@ -2,8 +2,8 @@ package se233.gameproject.model;
 
 public class Item {
     private double x,y;
-    private double width = 20;
-    private double height = 10;
+    private double width;
+    private double height;
     private double speed = 3.0;
     private String type;
     private boolean active = true;
@@ -12,6 +12,13 @@ public class Item {
         this.x = x;
         this.y = y;
         this.type = type;
+        if ("Dizzy".equals(type)) {
+            width = 28;
+            height = 24;
+        } else {
+            width = 20;
+            height = 10;
+        }
     }
 
     public void move() {

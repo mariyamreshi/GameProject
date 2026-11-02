@@ -1,12 +1,15 @@
 package se233.gameproject.controller;
 
 import javafx.animation.AnimationTimer;
+import javafx.animation.Animation;
+import javafx.animation.ScaleTransition;
 import javafx.fxml.FXML;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.input.KeyCode;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import se233.gameproject.model.Ball;
@@ -18,19 +21,22 @@ import javafx.scene.image.PixelReader;
 import javafx.scene.image.PixelWriter;
 import javafx.scene.image.WritableImage;
 import javafx.scene.text.Font;
+import javafx.util.Duration;
 
 import java.util.*;
 
 public class GameController {
     @FXML private Canvas gameCanvas;
     @FXML private Label scoreLabel;
-    @FXML private Label livesLabel;
+    @FXML private Label levelLabel;
+    @FXML private HBox heartsBox;
     @FXML private VBox upgradeMenu;
     @FXML private Button upgradeBtn1, upgradeBtn2, upgradeBtn3;
 
     private GameModel gameModel;
     private GraphicsContext graphics;
     private AnimationTimer gameLoop;
+    private int displayedLives = -1;
 
     private final List<String> allUpgrades = Arrays.asList(
             "Increase Paddle Size", "Increase Paddle Speed", "Decrease Ball Speed",
@@ -79,8 +85,6 @@ public class GameController {
         gameLoop = new AnimationTimer() {
             @Override
             public void handle(long now) {
-                if (gameModel.isGameOver()){ stop(); drawGameOver(); return; }
-                if (gameModel.isStageClear()){ stop(); drawStageClear(); return; }
                 if (gameModel.isGameOver()){
                     stop();
                     gameCanvas.setRotate(0);
@@ -210,26 +214,69 @@ public class GameController {
         }
 
         for (se233.gameproject.model.Item item : gameModel.getItems()) {
-            if (item.getType().equals("Laser")) {
+            if ("Laser".equals(item.getType())) {
                 graphics.drawImage(laserItemSprite, item.getX(), item.getY(), item.getWidth(), item.getHeight());
-                if ("Laser".equals(item.getType())) {
-                    graphics.setFill(Color.ORANGE);
-                    graphics.fillRect(item.getX(), item.getY(), item.getWidth(), item.getHeight());
-                    graphics.setFill(Color.WHITE);
-                    graphics.setFont(Font.font(10));
-                    graphics.fillText("L", item.getX() + 6, item.getY() + 9);
-                } else if ("Dizzy".equals(item.getType())) {
-                    graphics.setFill(Color.MEDIUMPURPLE);
-                    graphics.fillOval(item.getX(), item.getY(), item.getWidth(), item.getHeight());
-                    graphics.setFill(Color.WHITE);
-                    graphics.setFont(Font.font(9));
-                    graphics.fillText("D", item.getX() + 7, item.getY() + 9);
-                }
-            }
+            } else if ("Dizzy".equals(item.getType())) {
+                double x = item.getX();
+                double y = item.getY();
+                double width = item.getWidth();
+                double height = item.getHeight();
 
-            scoreLabel.setText("Score: " + gameModel.getScore());
-            livesLabel.setText("Lives: " + gameModel.getLives());
+                // Lavender orbit with a bright planet-colored center.
+                graphics.setStroke(Color.web("#594B7D"));
+                graphics.setLineWidth(2.0);
+                graphics.strokeOval(x - 2, y + 6, width + 4, height - 12);
+
+                graphics.setFill(Color.web("#FFD36C"));
+                graphics.fillOval(x, y, width, height);
+                graphics.setStroke(Color.web("#594B7D"));
+                graphics.strokeOval(x, y, width, height);
+
+                graphics.setFill(Color.web("#594B7D"));
+                graphics.setFont(Font.font(13));
+                graphics.fillText("D", x + 9, y + 17);
+
+                graphics.setFill(Color.WHITE);
+                graphics.fillOval(x + 19, y + 4, 4, 4);
+            }
         }
+
+        updateHud();
+    }
+
+    private void updateHud() {
+        scoreLabel.setText(String.format("%06d", gameModel.getScore()));
+        levelLabel.setText(String.format("LEVEL %02d", gameModel.getStageLevel()));
+
+        int lives = gameModel.getLives();
+        if (lives == displayedLives) {
+            return;
+        }
+
+        heartsBox.getChildren().clear();
+        int heartSlots = Math.max(3, lives);
+        for (int i = 0; i < heartSlots; i++) {
+            boolean filled = i < lives;
+            Label heart = new Label(filled ? "♥" : "♡");
+            heart.setStyle(filled
+                    ? "-fx-text-fill: #f47f83; -fx-font-size: 23px; -fx-effect: dropshadow(gaussian, rgba(244, 127, 131, 0.25), 4, 0.2, 0, 1);"
+                    : "-fx-text-fill: #d8cde1; -fx-font-size: 23px;");
+            heartsBox.getChildren().add(heart);
+
+            if (filled) {
+                ScaleTransition pulse = new ScaleTransition(Duration.seconds(0.75), heart);
+                pulse.setFromX(1.0);
+                pulse.setFromY(1.0);
+                pulse.setToX(1.16);
+                pulse.setToY(1.16);
+                pulse.setAutoReverse(true);
+                pulse.setCycleCount(Animation.INDEFINITE);
+                pulse.setDelay(Duration.millis(i * 120));
+                pulse.play();
+            }
+        }
+
+        displayedLives = lives;
     }
 
     private void drawGameOver(){
