@@ -189,10 +189,12 @@ public class GameModel {
             // Laser generation logic
             if (laserActiveFrames > 0) {
                 laserActiveFrames--;
-                if (laserActiveFrames % 15 == 0){
+                if (laserActiveFrames % 15 == 0) {
                     lasers.add(new Laser(paddle.getX() + 10, paddle.getY()));
                     lasers.add(new Laser(paddle.getX() + paddle.getWidth() - 15, paddle.getY()));
                 }
+            } else {
+                lasers.clear();
             }
 
             // Laser collision logic
@@ -245,7 +247,7 @@ public class GameModel {
                 if (itemOverlapsPaddle) {
                     item.deactivate();
                     if ("Laser".equals(item.getType())) {
-                        laserActiveFrames = 600; // 10 seconds
+                        laserActiveFrames = 100; // 10 seconds
                         logger.info("Player collected Laser item; dual lasers active for 10 seconds");
                     } else if ("Dizzy".equals(item.getType())) {
                         dizzyActiveFrames = DIZZY_DURATION_FRAMES;
