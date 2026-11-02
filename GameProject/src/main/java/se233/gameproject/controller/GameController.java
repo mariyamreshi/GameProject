@@ -19,82 +19,68 @@ import javafx.scene.image.PixelWriter;
 import javafx.scene.image.WritableImage;
 import javafx.scene.text.Font;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 public class GameController {
-    private Image spriteSheet;
-    @FXML
-    private Canvas gameCanvas;
-
-    @FXML
-    private Label scoreLabel;
-    @FXML
-    private Label livesLabel;
-
-    @FXML
-    private VBox upgradeMenu;
-    @FXML
-    private Button upgradeBtn1;
-    @FXML
-    private Button upgradeBtn2;
-    @FXML
-    private Button upgradeBtn3;
+    @FXML private Canvas gameCanvas;
+    @FXML private Label scoreLabel;
+    @FXML private Label livesLabel;
+    @FXML private VBox upgradeMenu;
+    @FXML private Button upgradeBtn1, upgradeBtn2, upgradeBtn3;
 
     private GameModel gameModel;
     private GraphicsContext graphics;
     private AnimationTimer gameLoop;
-    private Image paddleSprite;
 
     private final List<String> allUpgrades = Arrays.asList(
-            "Increase Paddle Size",
-            "Increase Paddle Speed",
-            "Decrease Ball Speed",
-            "Gain Extra Life",
-            "More Points Per Brick"
+            "Increase Paddle Size", "Increase Paddle Speed", "Decrease Ball Speed",
+            "Gain Extra Life", "More Points Per Brick"
     );
     private List<String> currentUpgrades;
+
+    // Standalone image variables
+    private Image bgImage, ballImage, laserProjectile, paddleNormal, laserItemSprite;
+    private Image normBrick, strongBrick, strongCrack, bonusBrick, specialBrick;
+
+    // Arrays for break animation frames
+    private Image[] normBreak = new Image[4];
+    private Image[] strongCrackBreak = new Image[4];
+    private Image[] bonusBreak = new Image[4];
+    private Image[] specialBreak = new Image[4];
+
+    // Inner class and variables for managing animations independently from the Model
+    private Set<Brick> knownBrokenBricks = new HashSet<>();
+    private List<BrokenAnimation> activeAnimations = new ArrayList<>();
+
+    private class BrokenAnimation {
+        double x, y;
+        int type;
+        int tick = 0;
+        BrokenAnimation(double x, double y, int type) {
+            this.x = x; this.y = y; this.type = type;
+        }
+    }
 
     @FXML
     public void initialize() {
         gameModel = new GameModel();
         graphics = gameCanvas.getGraphicsContext2D();
-        var imageUrl = getClass().getResource(
-                "/se233/gameproject/images/vaus.png"
-        );
+        graphics.setImageSmoothing(false); // Disable smoothing for crisp pixel art
 
-        if (imageUrl == null) {
-            throw new IllegalStateException("Could not find vaus.png");
-        }
-
-        spriteSheet = new Image(imageUrl.toExternalForm());
-        paddleSprite = createPaddleSprite();
+        loadAllImages();
 
         gameCanvas.setFocusTraversable(true);
         gameCanvas.setOnKeyPressed(event -> {
-            if (event.getCode() == KeyCode.LEFT) {
-                gameModel.getPaddle().moveLeft(0);
-            } else if (event.getCode() == KeyCode.RIGHT) {
-                gameModel.getPaddle().moveRight(gameModel.getGameWidth());
-            } else if (event.getCode() == KeyCode.SPACE) {
-                gameModel.releaseBall();
-            }
+            if (event.getCode() == KeyCode.LEFT) gameModel.getPaddle().moveLeft(0);
+            else if (event.getCode() == KeyCode.RIGHT) gameModel.getPaddle().moveRight(gameModel.getGameWidth());
+            else if (event.getCode() == KeyCode.SPACE) gameModel.releaseBall();
         });
 
         gameLoop = new AnimationTimer() {
             @Override
             public void handle(long now) {
-                if (gameModel.isGameOver()){
-                    stop();
-                    drawGameOver();
-                    return;
-                }
-                if (gameModel.isStageClear()){
-                    stop();
-                    drawStageClear();
-                    return;
-                }
+                if (gameModel.isGameOver()){ stop(); drawGameOver(); return; }
+                if (gameModel.isStageClear()){ stop(); drawStageClear(); return; }
                 gameModel.update();
                 drawGame();
             }
@@ -105,70 +91,107 @@ public class GameController {
         gameCanvas.requestFocus();
     }
 
-    private void drawGame() {
-        graphics.setFill(Color.web("#101626"));
-        graphics.fillRect(0, 0, gameCanvas.getWidth(), gameCanvas.getHeight());
+    // Helper method to safely load images and alert if a file is missing
+    private Image loadImageSafe(String relativePath, double width, double height) {
+        java.net.URL url = getClass().getResource(relativePath);
+        if (url == null) {
+            System.err.println("❌ File not Found: " + relativePath);
+            throw new IllegalStateException("Cannot find image: " + relativePath);
+        }
+        // If width and height are 0, use the original image size
+        if (width == 0 && height == 0) {
+            return new Image(url.toExternalForm());
+        }
+        return new Image(url.toExternalForm(), width, height, false, false);
+    }
 
+    private void loadAllImages() {
+        String path = "/se233/gameproject/images/";
+        double bw = 80, bh = 25; // Standard brick dimensions
+
+        // 1. Load background, ball, laser, and paddle
+        bgImage = loadImageSafe(path + "backgrounds/bg3_lavender_stars.png", 800, 600);
+        ballImage = loadImageSafe(path + "extras/ball.png", 15, 15);
+        laserProjectile = loadImageSafe(path + "extras/laser.png", 10, 20);
+        paddleNormal = loadImageSafe(path + "paddle/paddle_normal.png", 100, 20);
+
+        // 2. Load normal state bricks
+        normBrick = loadImageSafe(path + "bricks/brick_normal.png", bw, bh);
+        strongBrick = loadImageSafe(path + "bricks/brick_strong.png", bw, bh);
+        strongCrack = loadImageSafe(path + "bricks/brick_strongcrack.png", bw, bh);
+        bonusBrick = loadImageSafe(path + "bricks/brick_bonus.png", bw, bh);
+        specialBrick = loadImageSafe(path + "bricks/brick_special.png", bw, bh);
+
+        // 3. Load brick breaking animation frames (4 frames per type)
+        for (int i = 0; i < 4; i++) {
+            normBreak[i] = loadImageSafe(path + "bricks/break/normal_break_" + i + ".png", bw, bh);
+            strongCrackBreak[i] = loadImageSafe(path + "bricks/break/strongcrack_break_" + i + ".png", bw, bh);
+            bonusBreak[i] = loadImageSafe(path + "bricks/break/bonus_break_" + i + ".png", bw, bh);
+            specialBreak[i] = loadImageSafe(path + "bricks/break/special_break_" + i + ".png", bw, bh);
+        }
+
+        // 4. Load item capsule sprite
+        Image powerupsSheet = loadImageSafe(path + "Powerups.png", 0, 0);
+        laserItemSprite = cropSprite(powerupsSheet, 0, 16, 16, 8);
+    }
+
+    private void drawGame() {
+        // Draw background
+        graphics.drawImage(bgImage, 0, 0, gameCanvas.getWidth(), gameCanvas.getHeight());
+
+        // Draw normal bricks or queue break animations if destroyed
         for (Brick brick : gameModel.getBricks()) {
             if (!brick.isDestroyed()) {
-                if (brick.getType() == 1){
-                    if (brick.getHp() == 2) graphics.setFill(Color.DARKGRAY);
-                    else graphics.setFill(Color.LIGHTGRAY);
-                } else if (brick.getType() == 2) {
-                    graphics.setFill(Color.GOLD);
-                } else if (brick.getType() == 3) {
-                    graphics.setFill(Color.MAGENTA);
-                } else {
-                    graphics.setFill(Color.CORNFLOWERBLUE);
-                }
+                Image currentBrickImg = normBrick;
+                if (brick.getType() == 1) currentBrickImg = (brick.getHp() == 2) ? strongBrick : strongCrack;
+                else if (brick.getType() == 2) currentBrickImg = bonusBrick;
+                else if (brick.getType() == 3) currentBrickImg = specialBrick;
 
-                graphics.fillRect(
-                        brick.getX(),
-                        brick.getY(),
-                        brick.getWidth(),
-                        brick.getHeight()
-                );
+                graphics.drawImage(currentBrickImg, brick.getX(), brick.getY(), brick.getWidth(), brick.getHeight());
+            } else {
+                // If newly destroyed, add to the animation queue
+                if (!knownBrokenBricks.contains(brick)) {
+                    knownBrokenBricks.add(brick);
+                    activeAnimations.add(new BrokenAnimation(brick.getX(), brick.getY(), brick.getType()));
+                }
+            }
+        }
+
+        // Draw brick breaking animations
+        Iterator<BrokenAnimation> it = activeAnimations.iterator();
+        while (it.hasNext()) {
+            BrokenAnimation anim = it.next();
+            int frame = anim.tick / 4; // Change frame every 4 ticks
+
+            if (frame > 3) {
+                it.remove(); // Remove animation after playing all 4 frames
+            } else {
+                Image frameImg = normBreak[frame];
+                if (anim.type == 1) frameImg = strongCrackBreak[frame];
+                else if (anim.type == 2) frameImg = bonusBreak[frame];
+                else if (anim.type == 3) frameImg = specialBreak[frame];
+
+                graphics.drawImage(frameImg, anim.x, anim.y, 80, 25);
+                anim.tick++;
             }
         }
 
         Paddle paddle = gameModel.getPaddle();
-        graphics.drawImage(
-                paddleSprite,
-                paddle.getX(),
-                paddle.getY(),
-                paddle.getWidth(),
-                paddle.getHeight()
-        );
+        graphics.drawImage(paddleNormal, paddle.getX(), paddle.getY(), paddle.getWidth(), paddle.getHeight());
 
         Ball ball = gameModel.getBall();
-        graphics.setFill(Color.ORANGE);
-        graphics.fillOval(
-                ball.getX() - ball.getRadius(),
-                ball.getY() - ball.getRadius(),
-                ball.getRadius() * 2,
-                ball.getRadius() * 2
-        );
+        graphics.drawImage(ballImage, ball.getX() - ball.getRadius(), ball.getY() - ball.getRadius(), ball.getRadius() * 2, ball.getRadius() * 2);
 
-        graphics.setFill(Color.RED);
         for (se233.gameproject.model.Laser laser : gameModel.getLasers()) {
-            graphics.fillRect(
-                    laser.getX(),
-                    laser.getY(),
-                    laser.getWidth(),
-                    laser.getHeight()
-            );
+            graphics.drawImage(laserProjectile, laser.getX(), laser.getY(), laser.getWidth(), laser.getHeight());
         }
 
         for (se233.gameproject.model.Item item : gameModel.getItems()) {
             if (item.getType().equals("Laser")) {
-                graphics.setFill(Color.ORANGE); // Item color
-                graphics.fillRect(item.getX(), item.getY(), item.getWidth(), item.getHeight());
-
-                graphics.setFill(Color.WHITE);
-                graphics.setFont(Font.font(10));
-                graphics.fillText("L", item.getX() + 6, item.getY() + 9);
+                graphics.drawImage(laserItemSprite, item.getX(), item.getY(), item.getWidth(), item.getHeight());
             }
         }
+
         scoreLabel.setText("Score: " + gameModel.getScore());
         livesLabel.setText("Lives: " + gameModel.getLives());
     }
@@ -178,36 +201,9 @@ public class GameController {
         graphics.setFont(Font.font(48));
         graphics.fillText("GAME OVER", gameCanvas.getWidth() / 2-140, gameCanvas.getHeight()/2);
     }
-    private Image createPaddleSprite() {
-        int sourceX = 177;
-        int sourceY = 17;
-        int sourceWidth = 31;
-        int sourceHeight = 8;
-
-        PixelReader reader = spriteSheet.getPixelReader();
-        WritableImage sprite = new WritableImage(sourceWidth, sourceHeight);
-        PixelWriter writer = sprite.getPixelWriter();
-
-        for (int y = 0; y < sourceHeight; y++) {
-            for (int x = 0; x < sourceWidth; x++) {
-                var pixel = reader.getColor(sourceX + x, sourceY + y);
-
-                // Turn the sheet's solid green background transparent.
-                if (pixel.getGreen() > 0.25
-                        && pixel.getRed() < 0.1
-                        && pixel.getBlue() < 0.1) {
-                    writer.setColor(x, y, javafx.scene.paint.Color.TRANSPARENT);
-                } else {
-                    writer.setColor(x, y, pixel);
-                }
-            }
-        }
-        return sprite;
-    }
 
     private void drawStageClear() {
         gameLoop.stop();
-
         Collections.shuffle(allUpgrades);
         currentUpgrades = allUpgrades.subList(0,3);
 
@@ -217,23 +213,33 @@ public class GameController {
 
         upgradeMenu.setVisible(true);
     }
-    // btn event
-    @FXML
-    public void selectUpgrade1() { applyUpgradeAndNextStage(0); }
 
-    @FXML
-    public void selectUpgrade2() { applyUpgradeAndNextStage(1); }
-
-    @FXML
-    public void selectUpgrade3() { applyUpgradeAndNextStage(2); }
+    @FXML public void selectUpgrade1() { applyUpgradeAndNextStage(0); }
+    @FXML public void selectUpgrade2() { applyUpgradeAndNextStage(1); }
+    @FXML public void selectUpgrade3() { applyUpgradeAndNextStage(2); }
 
     private void applyUpgradeAndNextStage(int buttonIndex){
         upgradeMenu.setVisible(false);
-
         gameModel.applyUpgrade(currentUpgrades.get(buttonIndex));
+
+        // Clear animation queue for the next stage
+        knownBrokenBricks.clear();
+        activeAnimations.clear();
 
         gameLoop.start();
         gameCanvas.requestFocus();
     }
 
+    private Image cropSprite(Image sheet, int sourceX, int sourceY, int width, int height) {
+        PixelReader reader = sheet.getPixelReader();
+        WritableImage sprite = new WritableImage(width, height);
+        PixelWriter writer = sprite.getPixelWriter();
+
+        for (int y = 0; y < height; y++) {
+            for (int x = 0; x < width; x++) {
+                writer.setColor(x, y, reader.getColor(sourceX + x, sourceY + y));
+            }
+        }
+        return sprite;
+    }
 }
