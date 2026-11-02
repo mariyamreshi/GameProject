@@ -18,15 +18,12 @@ import javafx.scene.image.PixelReader;
 import javafx.scene.image.PixelWriter;
 import javafx.scene.image.WritableImage;
 import javafx.scene.text.Font;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
 public class GameController {
-    private static final Logger logger = LogManager.getLogger(GameController.class);
     private Image spriteSheet;
     @FXML
     private Canvas gameCanvas;
@@ -78,13 +75,10 @@ public class GameController {
         gameCanvas.setOnKeyPressed(event -> {
             if (event.getCode() == KeyCode.LEFT) {
                 gameModel.getPaddle().moveLeft(0);
-                logger.debug("Player moved paddle left");
             } else if (event.getCode() == KeyCode.RIGHT) {
                 gameModel.getPaddle().moveRight(gameModel.getGameWidth());
-                logger.debug("Player moved paddle right");
             } else if (event.getCode() == KeyCode.SPACE) {
                 gameModel.releaseBall();
-                logger.debug("Player pressed Space to release the ball");
             }
         });
 
