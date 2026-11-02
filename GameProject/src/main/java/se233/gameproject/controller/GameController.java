@@ -129,7 +129,6 @@ public class GameController {
     private Image loadImageSafe(String relativePath, double width, double height) {
         java.net.URL url = getClass().getResource(relativePath);
         if (url == null) {
-            System.err.println("❌ File not Found: " + relativePath);
             throw new IllegalStateException("Cannot find image: " + relativePath);
         }
         // If width and height are 0, use the original image size

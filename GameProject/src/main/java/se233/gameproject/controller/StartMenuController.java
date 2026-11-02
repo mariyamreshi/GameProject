@@ -8,9 +8,9 @@ import javafx.scene.Scene;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 import se233.gameproject.GameApplication;
+import se233.gameproject.GameExceptionHandler;
 
 import java.io.IOException;
-import java.io.UncheckedIOException;
 
 public class StartMenuController {
     @FXML
@@ -27,7 +27,8 @@ public class StartMenuController {
                 try {
                     startGame();
                 } catch (IOException exception) {
-                    throw new UncheckedIOException(exception);
+                    gameStarting = false;
+                    GameExceptionHandler.handle(exception, root.getScene().getWindow());
                 }
             }
         });
@@ -35,8 +36,13 @@ public class StartMenuController {
     }
 
     @FXML
-    protected void onStartButtonClick() throws IOException {
-        startGame();
+    protected void onStartButtonClick() {
+        try {
+            startGame();
+        } catch (IOException exception) {
+            gameStarting = false;
+            GameExceptionHandler.handle(exception, root.getScene().getWindow());
+        }
     }
 
     private void startGame() throws IOException {
