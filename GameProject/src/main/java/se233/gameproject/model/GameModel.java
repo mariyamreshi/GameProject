@@ -61,7 +61,7 @@ public class GameModel {
 
     private void createBricks() {
         int rows = Math.min(2 + stageLevel, 8);
-        int columns = 4;
+        int columns = 8;
         double brickWidth = 80;
         double brickHeight = 25;
         double gap = 5;
@@ -245,7 +245,7 @@ public class GameModel {
                 if (itemOverlapsPaddle) {
                     item.deactivate();
                     if ("Laser".equals(item.getType())) {
-                        laserActiveFrames = 600; // 10 seconds
+                        laserActiveFrames = 240; // 10 seconds
                         logger.info("Player collected Laser item; dual lasers active for 10 seconds");
                     } else if ("Dizzy".equals(item.getType())) {
                         dizzyActiveFrames = DIZZY_DURATION_FRAMES;

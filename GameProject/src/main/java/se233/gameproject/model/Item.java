@@ -4,7 +4,7 @@ public class Item {
     private double x,y;
     private double width;
     private double height;
-    private double speed = 3.0;
+    private double speed = 1.5;
     private String type;
     private boolean active = true;
 
