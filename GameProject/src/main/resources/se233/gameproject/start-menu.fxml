@@ -32,19 +32,8 @@
                 style="-fx-fill: transparent; -fx-stroke: #d8d0dc; -fx-stroke-width: 1.5px; -fx-opacity: 0.75;"/>
     </AnchorPane>
 
-    <VBox alignment="TOP_CENTER" prefWidth="700" prefHeight="560"
-          maxWidth="700" maxHeight="560"
-          style="-fx-background-color: #fffaf6; -fx-background-radius: 24px; -fx-border-color: #594b7d; -fx-border-width: 2px; -fx-border-radius: 24px; -fx-effect: dropshadow(gaussian, rgba(65, 51, 92, 0.24), 0, 9, 0, 8);">
-        <HBox alignment="CENTER_LEFT" spacing="8" prefHeight="44"
-              style="-fx-padding: 0 18px; -fx-background-color: #f4e9e7; -fx-background-radius: 22px 22px 0 0; -fx-border-color: transparent transparent #594b7d transparent; -fx-border-width: 0 0 2px 0;">
-            <Circle radius="5" style="-fx-fill: #f28f91; -fx-stroke: #594b7d; -fx-stroke-width: 1.3px;"/>
-            <Circle radius="5" style="-fx-fill: #ffd36c; -fx-stroke: #594b7d; -fx-stroke-width: 1.3px;"/>
-            <Circle radius="5" style="-fx-fill: #87c9b5; -fx-stroke: #594b7d; -fx-stroke-width: 1.3px;"/>
-            <Label text="STARPOP ARCADE" HBox.hgrow="ALWAYS"
-                   style="-fx-text-fill: #594b7d; -fx-font-size: 11px; -fx-font-weight: bold; -fx-letter-spacing: 2px; -fx-alignment: center;"/>
-            <Label text="✦" style="-fx-text-fill: #8dc8c5; -fx-font-size: 18px;"/>
-        </HBox>
-
+    <VBox alignment="CENTER" prefWidth="700" prefHeight="560"
+          maxWidth="700" maxHeight="560">
         <VBox alignment="CENTER" spacing="8" VBox.vgrow="ALWAYS"
               style="-fx-padding: 12px 30px 18px 30px; -fx-background-color: transparent;">
             <StackPane prefWidth="130" prefHeight="100">

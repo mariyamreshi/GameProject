@@ -21,6 +21,7 @@ import javafx.scene.image.PixelReader;
 import javafx.scene.image.PixelWriter;
 import javafx.scene.image.WritableImage;
 import javafx.scene.text.Font;
+import javafx.scene.text.TextAlignment;
 import javafx.util.Duration;
 
 import java.util.*;
@@ -79,7 +80,13 @@ public class GameController {
         gameCanvas.setOnKeyPressed(event -> {
             if (event.getCode() == KeyCode.LEFT) gameModel.getPaddle().moveLeft(0);
             else if (event.getCode() == KeyCode.RIGHT) gameModel.getPaddle().moveRight(gameModel.getGameWidth());
-            else if (event.getCode() == KeyCode.SPACE) gameModel.releaseBall();
+            else if (event.getCode() == KeyCode.SPACE) {
+                if (gameModel.isGameOver()) {
+                    restartGame();
+                } else {
+                    gameModel.releaseBall();
+                }
+            }
         });
 
         gameLoop = new AnimationTimer() {
@@ -280,9 +287,31 @@ public class GameController {
     }
 
     private void drawGameOver(){
-        graphics.setFill(Color.RED);
-        graphics.setFont(Font.font(48));
-        graphics.fillText("GAME OVER", gameCanvas.getWidth() / 2-140, gameCanvas.getHeight()/2);
+        graphics.setFill(Color.rgb(45, 37, 70, 0.82));
+        graphics.fillRect(0, 0, gameCanvas.getWidth(), gameCanvas.getHeight());
+
+        graphics.setTextAlign(TextAlignment.CENTER);
+        graphics.setFill(Color.web("#FFD36C"));
+        graphics.setFont(Font.font(46));
+        graphics.fillText("GAME OVER", gameCanvas.getWidth() / 2, gameCanvas.getHeight() / 2 - 12);
+
+        graphics.setFill(Color.web("#FFF9F5"));
+        graphics.setFont(Font.font(20));
+        graphics.fillText("Press Space to restart", gameCanvas.getWidth() / 2, gameCanvas.getHeight() / 2 + 32);
+        graphics.setTextAlign(TextAlignment.LEFT);
+    }
+
+    private void restartGame() {
+        gameModel = new GameModel();
+        knownBrokenBricks.clear();
+        activeAnimations.clear();
+        gameCanvas.setRotate(0);
+        displayedLives = -1;
+        upgradeMenu.setVisible(false);
+
+        drawGame();
+        gameLoop.start();
+        gameCanvas.requestFocus();
     }
 
     private void drawStageClear() {
