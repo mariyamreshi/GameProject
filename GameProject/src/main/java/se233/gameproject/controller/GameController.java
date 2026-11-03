@@ -142,20 +142,20 @@ public class GameController {
         String path = "/se233/gameproject/images/";
         double bw = 80, bh = 25; // Standard brick dimensions
 
-        // 1. Load background, ball, laser, and paddle
+        // Load background, ball, laser, and paddle
         bgImage = loadImageSafe(path + "backgrounds/bg4_sky_gingham.png", 800, 600);
         ballImage = loadImageSafe(path + "extras/ball.png", 15, 15);
         laserProjectile = loadImageSafe(path + "extras/laser.png", 10, 20);
         paddleNormal = loadImageSafe(path + "paddle/paddle_normal.png", 100, 20);
 
-        // 2. Load normal state bricks
+        // Load normal state bricks
         normBrick = loadImageSafe(path + "bricks/brick_normal.png", bw, bh);
         strongBrick = loadImageSafe(path + "bricks/brick_strong.png", bw, bh);
         strongCrack = loadImageSafe(path + "bricks/brick_strongcrack.png", bw, bh);
         bonusBrick = loadImageSafe(path + "bricks/brick_bonus.png", bw, bh);
         specialBrick = loadImageSafe(path + "bricks/brick_special.png", bw, bh);
 
-        // 3. Load brick breaking animation frames (4 frames per type)
+        // Load brick breaking animation frames (4 frames per type)
         for (int i = 0; i < 4; i++) {
             normBreak[i] = loadImageSafe(path + "bricks/break/normal_break_" + i + ".png", bw, bh);
             strongCrackBreak[i] = loadImageSafe(path + "bricks/break/strongcrack_break_" + i + ".png", bw, bh);

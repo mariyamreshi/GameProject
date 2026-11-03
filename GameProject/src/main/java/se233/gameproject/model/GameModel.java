@@ -138,7 +138,7 @@ public class GameModel {
                 double normalizedHitPoint = hitPoint / (paddle.getWidth()/2);
 
                 ball.setVelocityX(normalizedHitPoint * maxBallSpeedX);
-                ball.setVelocityY(ballSpeedY);
+                ball.setVelocityY(ballSpeedY); // always goes up
                 ball.setY(paddle.getY() - ball.getRadius());
             }
 
@@ -214,8 +214,7 @@ public class GameModel {
                         if (brick.isDestroyed()) {
                             int points = brick.getScoreValue() * scoreMultiplier;
                             score += points;
-                            logger.info("Brick destroyed: type={}, points={}, totalScore={}",
-                                    brick.getType(), points, score);
+                            logger.info("Brick destroyed: type={}, points={}, totalScore={}", brick.getType(), points, score);
 
                             if (brick.getType() == 3) {
                                 lives++;
