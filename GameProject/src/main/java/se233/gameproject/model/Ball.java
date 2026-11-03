@@ -22,10 +22,12 @@ public class Ball {
         x += velocityX;
         y += velocityY;
     }
-
+//if brick hits left/right it will reverse horizontal speed
     public void bounceHorizontally(){
         velocityX = -velocityX;
     }
+    
+//if brick hits top/bottom it reverses vertical speed
     public void bounceVertically(){
         velocityY = -velocityY;
     }

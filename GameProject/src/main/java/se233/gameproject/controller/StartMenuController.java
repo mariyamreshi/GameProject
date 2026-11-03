@@ -11,7 +11,7 @@ import se233.gameproject.GameApplication;
 import se233.gameproject.GameExceptionHandler;
 
 import java.io.IOException;
-
+// Open the game screen when the player starts from the menu
 public class StartMenuController {
     @FXML
     private StackPane root;

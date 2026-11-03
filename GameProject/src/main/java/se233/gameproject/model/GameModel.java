@@ -29,6 +29,7 @@ public class GameModel {
 
     private final List<Laser> lasers;
     private int laserActiveFrames = 0;
+    //how long dizzy effect lasts
     public static final int DIZZY_DURATION_FRAMES = 300; // About 5 seconds
     private int dizzyActiveFrames = 0;
 
@@ -85,8 +86,11 @@ public class GameModel {
             }
         }
     }
+    
+    // Advance gameplay and handle ball movement, collisions, scoring, lives, and stage completion.
 
     public void update() {
+    //checks if effect has time left --1 every update
         if (dizzyActiveFrames > 0) {
             dizzyActiveFrames--;
         }
@@ -309,6 +313,7 @@ public class GameModel {
         if (roll < 10) {
             type = "Laser";
         } else if (roll < 20) {
+        // dizzy is dropped 10-19 
             type = "Dizzy";
         } else {
             return;

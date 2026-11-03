@@ -75,7 +75,7 @@ public class GameController {
         graphics.setImageSmoothing(false); // Disable smoothing for crisp pixel art
 
         loadAllImages();
-
+// Convert keyboard input into paddle movement, ball launch, or game restart
         gameCanvas.setFocusTraversable(true);
         gameCanvas.setOnKeyPressed(event -> {
             if (event.getCode() == KeyCode.LEFT) gameModel.getPaddle().moveLeft(0);
@@ -88,7 +88,8 @@ public class GameController {
                 }
             }
         });
-
+// Update the game model and redraw the screen each frame
+// Pause the loop when a stage is done or u die
         gameLoop = new AnimationTimer() {
             @Override
             public void handle(long now) {
@@ -107,9 +108,11 @@ public class GameController {
                 gameModel.update();
 
                 int dizzyFrames = gameModel.getDizzyActiveFrames();
+                //spins screen and then resets
                 if (dizzyFrames > 0) {
                     double elapsedFrames = GameModel.DIZZY_DURATION_FRAMES - dizzyFrames;
                     gameCanvas.setRotate(
+                    //720 = 2 full rotations
                             elapsedFrames * 720.0 / GameModel.DIZZY_DURATION_FRAMES
                     );
                 } else {

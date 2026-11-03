@@ -12,10 +12,11 @@ public final class GameExceptionHandler {
 
     private GameExceptionHandler() {
     }
-
+//receive message and throw error
     public static void handle(Throwable exception, Window owner) {
         Throwable cause = rootCause(exception);
         String message = cause.getMessage();
+        //make sure there is message, then log
         if (message == null || message.isBlank()) {
             message = cause.getClass().getSimpleName();
         }
@@ -23,6 +24,7 @@ public final class GameExceptionHandler {
         logger.error("The game could not continue: {}", message, exception);
 
         String alertMessage = message;
+        //error dialog, displays error msg
         Runnable showAlert = () -> {
             try {
                 Alert alert = new Alert(Alert.AlertType.ERROR);
@@ -32,13 +34,14 @@ public final class GameExceptionHandler {
                 if (owner != null && owner.isShowing()) {
                     alert.initOwner(owner);
                 }
+                //shows and waits for player to close it
                 alert.showAndWait();
             } catch (RuntimeException alertFailure) {
                 // Logging above still records the original error if JavaFX cannot show a dialog.
                 logger.error("Could not display the game error dialog", alertFailure);
             }
         };
-
+// show dialog safely
         if (Platform.isFxApplicationThread()) {
             showAlert.run();
         } else {
