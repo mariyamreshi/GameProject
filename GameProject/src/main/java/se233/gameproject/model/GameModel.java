@@ -23,7 +23,7 @@ public class GameModel {
 
     private int scoreMultiplier = 1;
     private double ballSpeedY = -3.0;
-    private double maxBallSpeedX = 5.0;
+    private double maxBallSpeedX = 4.0;
 
     private int stageLevel = 1;
 
